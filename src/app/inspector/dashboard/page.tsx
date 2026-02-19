@@ -10,7 +10,6 @@ import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard';
 import { CaseCard } from '@/components/dashboard/CaseCard';
 import { FullPageSkeleton } from '@/components/loading/FullPageSkeleton';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   AlertTriangle,
@@ -39,28 +38,28 @@ const stats = [
     value: '23',
     change: '+5 this week',
     icon: AlertTriangle,
-    gradient: gradients.stats.orange,
+    colorIndex: 1 as const,
   },
   {
     title: 'Resolved Cases',
     value: '187',
     change: '+12 this month',
     icon: CheckCircle2,
-    gradient: gradients.stats.green,
+    colorIndex: 2 as const,
   },
   {
     title: 'Inspections Done',
     value: '342',
     change: '28 this week',
     icon: ClipboardCheck,
-    gradient: gradients.stats.cyan,
+    colorIndex: 3 as const,
   },
   {
     title: 'Pending Reviews',
     value: '15',
     change: '3 urgent',
     icon: Clock,
-    gradient: gradients.stats.purple,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -166,12 +165,12 @@ export default function InspectorDashboardPage() {
           primaryAction={{
             label: 'Search Cases',
             icon: Search,
-            onClick: () => {},
+            onClick: () => { },
           }}
           secondaryAction={{
             label: 'New Inspection',
             icon: ArrowUpRight,
-            onClick: () => {},
+            onClick: () => { },
           }}
           decorativeIcon={ClipboardCheck}
         />
@@ -185,7 +184,7 @@ export default function InspectorDashboardPage() {
               value={stat.value}
               change={stat.change}
               icon={stat.icon}
-              gradient={stat.gradient}
+              colorIndex={stat.colorIndex}
             />
           ))}
         </div>
@@ -196,7 +195,10 @@ export default function InspectorDashboardPage() {
             <CardHeader className="border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
+                  <div
+                    className="h-8 w-8 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                  >
                     <AlertTriangle className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -234,7 +236,10 @@ export default function InspectorDashboardPage() {
             <CardHeader className="border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <div
+                    className="h-8 w-8 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-2-from), var(--theme-icon-2-to))' }}
+                  >
                     <Calendar className="h-4 w-4 text-white" />
                   </div>
                   <div>
@@ -254,11 +259,10 @@ export default function InspectorDashboardPage() {
                         <Building2 className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
                         <h4 className="font-semibold text-xs truncate">{inspection.company}</h4>
                       </div>
-                      <span className={`px-1 py-0.5 text-[10px] font-semibold rounded whitespace-nowrap ${
-                        inspection.priority === 'High' ? 'bg-red-100 text-red-600' :
-                        inspection.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' :
-                        'bg-blue-100 text-blue-600'
-                      }`}>
+                      <span className={`px-1 py-0.5 text-[10px] font-semibold rounded whitespace-nowrap ${inspection.priority === 'High' ? 'bg-red-100 text-red-600' :
+                          inspection.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' :
+                            'bg-blue-100 text-blue-600'
+                        }`}>
                         {inspection.priority}
                       </span>
                     </div>

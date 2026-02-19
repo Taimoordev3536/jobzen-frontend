@@ -6,6 +6,13 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/config/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  safelist: [
+    { pattern: /^bg-gradient-to-/ },
+    { pattern: /^from-/ },
+    { pattern: /^via-/ },
+    { pattern: /^to-/ },
   ],
   theme: {
     container: {

@@ -12,7 +12,6 @@ import { AnalysisCard } from '@/components/dashboard/AnalysisCard';
 import { ContractCard } from '@/components/dashboard/ContractCard';
 import { FullPageSkeleton } from '@/components/loading/FullPageSkeleton';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   Users,
@@ -40,28 +39,28 @@ const stats = [
     value: '143',
     change: '+12 this month',
     icon: Users,
-    gradient: gradients.stats.cyan,
+    colorIndex: 1 as const,
   },
   {
     title: 'Active Contracts',
     value: '28',
     change: '6 pending approval',
     icon: Briefcase,
-    gradient: gradients.stats.blue,
+    colorIndex: 2 as const,
   },
   {
     title: 'Monthly Revenue',
     value: '$84,200',
     change: '+24% from last month',
     icon: DollarSign,
-    gradient: gradients.stats.green,
+    colorIndex: 3 as const,
   },
   {
     title: 'Client Satisfaction',
     value: '4.8',
     change: '127 reviews',
     icon: Star,
-    gradient: gradients.stats.orange,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -71,21 +70,21 @@ const quickStats = [
     value: '234',
     change: 'This month',
     icon: Briefcase,
-    color: gradients.stats.blue,
+    colorIndex: 1 as const,
   },
   {
     title: 'Hours Worked',
     value: '5,420',
     change: 'Total hours',
     icon: Clock,
-    color: gradients.stats.green,
+    colorIndex: 2 as const,
   },
   {
     title: 'New Workers',
     value: '12',
     change: 'This month',
     icon: Users,
-    color: gradients.stats.purple,
+    colorIndex: 3 as const,
   },
 ];
 
@@ -186,12 +185,12 @@ export default function PartnerDashboard() {
           primaryAction={{
             label: 'Add Workers',
             icon: UserPlus,
-            onClick: () => {},
+            onClick: () => { },
           }}
           secondaryAction={{
             label: 'View Contracts',
             icon: ArrowUpRight,
-            onClick: () => {},
+            onClick: () => { },
           }}
           decorativeIcon={Award}
         />
@@ -205,7 +204,7 @@ export default function PartnerDashboard() {
               value={stat.value}
               change={stat.change}
               icon={stat.icon}
-              gradient={stat.gradient}
+              colorIndex={stat.colorIndex}
             />
           ))}
         </div>
@@ -301,17 +300,17 @@ export default function PartnerDashboard() {
                     payment: DollarSign,
                     review: Star,
                   };
-                  const gradientMap = {
-                    contract: 'from-blue-500 to-blue-600',
-                    worker: 'from-purple-500 to-purple-600',
-                    payment: 'from-green-500 to-green-600',
-                    review: 'from-yellow-500 to-yellow-600',
+                  const colorIndexMap: Record<string, 1 | 2 | 3 | 4> = {
+                    contract: 1,
+                    worker: 2,
+                    payment: 3,
+                    review: 4,
                   };
                   return (
                     <DataListItem
                       key={index}
                       icon={iconMap[activity.type as keyof typeof iconMap]}
-                      iconGradient={gradientMap[activity.type as keyof typeof gradientMap]}
+                      colorIndex={colorIndexMap[activity.type as keyof typeof colorIndexMap]}
                       primaryText={activity.message}
                       secondaryText={activity.time}
                     />
@@ -325,7 +324,6 @@ export default function PartnerDashboard() {
           <AnalysisCard
             title="Quick Stats"
             description="This month's overview"
-            gradient={gradients.partner}
             stats={quickStats}
             columns={3}
             className="lg:col-span-1"

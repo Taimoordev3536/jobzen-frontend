@@ -77,6 +77,7 @@ export const dashboardConfigs: Record<UserRole, DashboardConfig> = {
       { label: 'Dashboard', href: '/employer/dashboard', icon: LayoutDashboard },
       { label: 'Jobs', href: '/employer/jobs', icon: Briefcase },
       { label: 'Workers', href: '/employer/workers', icon: Users },
+      { label: 'Clients', href: '/employer/clients', icon: UserCircle2 },
       { label: 'Applications', href: '/employer/applications', icon: FileText },
       { label: 'Messages', href: '/employer/messages', icon: MessageSquare },
       { label: 'Settings', href: '/employer/settings', icon: Settings },
@@ -167,6 +168,20 @@ export const dashboardConfigs: Record<UserRole, DashboardConfig> = {
     },
     badgeIcon: ClipboardCheck,
     decorativeIcon: ClipboardCheck,
+  },
+
+  [UserRole.UNASSIGNED]: {
+    menuItems: [
+      { label: 'Complete Profile', href: '/auth/complete-profile', icon: Users },
+    ],
+    welcome: {
+      title: 'Welcome to Jobzen',
+      subtitle: 'Please complete your profile to get started',
+      badgeLabel: 'New User',
+      gradient: 'from-gray-500 via-gray-600 to-gray-700',
+    },
+    badgeIcon: Users,
+    decorativeIcon: Users,
   },
 };
 

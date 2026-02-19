@@ -5,6 +5,7 @@ export enum UserRole {
   CLIENT = 'client',
   WORKER = 'worker',
   INSPECTOR = 'inspector',
+  UNASSIGNED = 'unassigned',
 }
 
 export enum UserStatus {
@@ -18,10 +19,14 @@ export interface User {
   id: string;
   email: string;
   name?: string;
+  firstName?: string;
+  lastName?: string;
   role: UserRole;
   status: UserStatus;
   phone?: string;
   profileImage?: string;
+  avatarUrl?: string;
+  provider?: string;
   emailVerified: boolean;
   phoneVerified: boolean;
   createdAt: string;
@@ -43,5 +48,15 @@ export interface RegisterDto {
   email: string;
   password: string;
   role: UserRole;
+  phone?: string;
+}
+
+export interface CreateUserDto {
+  email: string;
+  password: string;
+  role: UserRole;
+  name: string;
+  firstName?: string;
+  lastName?: string;
   phone?: string;
 }

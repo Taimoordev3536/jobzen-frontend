@@ -11,7 +11,6 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard';
 import { JobCard } from '@/components/dashboard/JobCard';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   Briefcase,
@@ -36,28 +35,28 @@ const stats = [
     value: '24',
     change: '+3 this week',
     icon: Briefcase,
-    color: gradients.stats.blue,
+    colorIndex: 1 as const,
   },
   {
     title: 'Total Workers',
     value: '156',
     change: '+12 this month',
     icon: Users,
-    color: gradients.stats.cyan,
+    colorIndex: 2 as const,
   },
   {
     title: 'Completed Jobs',
     value: '842',
     change: '+48 this week',
     icon: CheckCircle2,
-    color: gradients.stats.green,
+    colorIndex: 3 as const,
   },
   {
     title: 'Hours This Month',
     value: '3,240',
     change: '840 hrs/week avg',
     icon: Clock,
-    color: gradients.stats.purple,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -123,7 +122,10 @@ export default function EmployerDashboard() {
   }
 
   return (
-    <DashboardLayout menuItems={dashboardConfig.menuItems} title="Employer Dashboard">
+    <DashboardLayout
+      menuItems={dashboardConfig.menuItems}
+      title="Employer Dashboard"
+    >
       <div className="space-y-4">
         {/* Welcome Banner */}
         <WelcomeBanner
@@ -155,7 +157,7 @@ export default function EmployerDashboard() {
               value={stat.value}
               change={stat.change}
               icon={stat.icon}
-              gradient={stat.color}
+              colorIndex={stat.colorIndex}
             />
           ))}
         </div>
@@ -166,7 +168,10 @@ export default function EmployerDashboard() {
             <CardHeader className="border-b pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                  <div
+                    className="h-7 w-7 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                  >
                     <Briefcase className="h-3.5 w-3.5 text-white" />
                   </div>
                   <div>
@@ -188,8 +193,8 @@ export default function EmployerDashboard() {
                     status={job.status}
                     statusVariant={
                       job.status === 'Full' ? 'success' :
-                      job.status === 'Urgent' || job.urgency === 'High' ? 'error' :
-                      'info'
+                        job.status === 'Urgent' || job.urgency === 'High' ? 'error' :
+                          'info'
                     }
                     leftBadge={{
                       icon: Users,

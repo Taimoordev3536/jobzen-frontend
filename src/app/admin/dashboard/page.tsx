@@ -9,13 +9,10 @@ import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard';
 import { DataListItem } from '@/components/dashboard/DataListItem';
 import { FullPageSkeleton } from '@/components/loading/FullPageSkeleton';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients, textGradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   Users,
   Briefcase,
-  TrendingUp,
-  TrendingDown,
   DollarSign,
   Activity,
   UserPlus,
@@ -23,7 +20,6 @@ import {
   Shield,
   Settings,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 const dashboardConfig = getDashboardConfig(UserRole.ADMIN);
 
@@ -34,7 +30,7 @@ const stats = [
     change: '+12.5%',
     trend: 'up' as const,
     icon: Users,
-    color: gradients.stats.cyan,
+    colorIndex: 1 as const,
   },
   {
     title: 'Active Jobs',
@@ -42,7 +38,7 @@ const stats = [
     change: '+8.2%',
     trend: 'up' as const,
     icon: Briefcase,
-    color: gradients.stats.blue,
+    colorIndex: 2 as const,
   },
   {
     title: 'Total Revenue',
@@ -50,7 +46,7 @@ const stats = [
     change: '+23.1%',
     trend: 'up' as const,
     icon: DollarSign,
-    color: gradients.stats.green,
+    colorIndex: 3 as const,
   },
   {
     title: 'Platform Activity',
@@ -58,7 +54,7 @@ const stats = [
     change: '-2.3%',
     trend: 'down' as const,
     icon: Activity,
-    color: gradients.stats.purple,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -151,7 +147,6 @@ export default function AdminDashboard() {
         <AnalysisCard
           title="Platform Overview"
           description="Real-time metrics and insights"
-          gradient={gradients.admin}
           summaryBoxes={[
             { label: 'This Month', value: '+$284K' },
             { label: 'Growth', value: '↑ 23%', variant: 'success' },
@@ -162,11 +157,17 @@ export default function AdminDashboard() {
 
         <div className="grid gap-3 lg:grid-cols-3">
           {/* Recent Activity */}
-          <Card className={cn("lg:col-span-2 border-0 shadow-xl", gradients.card.white)}>
+          <Card
+            className="lg:col-span-2 border-0 shadow-xl"
+            style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-card-border)' }}
+          >
             <CardHeader className="border-b pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={cn("h-7 w-7 rounded-lg flex items-center justify-center", `bg-gradient-to-br ${gradients.icon.blue}`)}>
+                  <div
+                    className="h-7 w-7 rounded-lg flex items-center justify-center"
+                    style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                  >
                     <Activity className="h-3.5 w-3.5 text-white" />
                   </div>
                   <div>
@@ -187,18 +188,18 @@ export default function AdminDashboard() {
                     report: FileText,
                     partner: Users,
                   };
-                  const gradientMap = {
-                    job: 'from-blue-500 to-blue-600',
-                    user: 'from-green-500 to-green-600',
-                    complete: 'from-purple-500 to-purple-600',
-                    report: 'from-orange-500 to-orange-600',
-                    partner: 'from-pink-500 to-pink-600',
+                  const colorIndexMap: Record<string, 1 | 2 | 3 | 4> = {
+                    job: 1,
+                    user: 2,
+                    complete: 3,
+                    report: 4,
+                    partner: 1,
                   };
                   return (
                     <DataListItem
                       key={index}
                       icon={iconMap[activity.type as keyof typeof iconMap]}
-                      iconGradient={gradientMap[activity.type as keyof typeof gradientMap]}
+                      colorIndex={colorIndexMap[activity.type as keyof typeof colorIndexMap]}
                       primaryText={`${activity.user} ${activity.action}`}
                       secondaryText={activity.time}
                     />
@@ -209,8 +210,11 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Top Employers */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader className={cn("border-b pb-3", `bg-gradient-to-r ${gradients.overlay.blue}`)}>
+          <Card className="border-0 shadow-lg" style={{ backgroundColor: 'var(--theme-card-bg)' }}>
+            <CardHeader
+              className="border-b pb-3"
+              style={{ backgroundColor: 'var(--theme-accent-light)', borderColor: 'var(--theme-card-border)' }}
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-base">Top Employers</CardTitle>

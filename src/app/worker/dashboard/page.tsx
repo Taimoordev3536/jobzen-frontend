@@ -11,7 +11,6 @@ import { WelcomeBanner } from '@/components/dashboard/WelcomeBanner';
 import { JobCard } from '@/components/dashboard/JobCard';
 import { FullPageSkeleton } from '@/components/loading/FullPageSkeleton';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   Briefcase,
@@ -37,28 +36,28 @@ const stats = [
     value: '3',
     change: '2 upcoming',
     icon: Briefcase,
-    gradient: gradients.stats.blue,
+    colorIndex: 1 as const,
   },
   {
     title: 'This Month Earnings',
     value: '$2,840',
     change: '+18% from last month',
     icon: DollarSign,
-    gradient: gradients.stats.green,
+    colorIndex: 2 as const,
   },
   {
     title: 'Hours Worked',
     value: '127',
     change: '32 hrs this week',
     icon: Clock,
-    gradient: gradients.stats.purple,
+    colorIndex: 3 as const,
   },
   {
     title: 'Rating',
     value: '4.9',
     change: '48 reviews',
     icon: Star,
-    gradient: gradients.stats.orange,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -154,12 +153,12 @@ export default function WorkerDashboard() {
           primaryAction={{
             label: 'Browse Jobs',
             icon: Search,
-            onClick: () => {},
+            onClick: () => { },
           }}
           secondaryAction={{
             label: 'My Schedule',
             icon: Calendar,
-            onClick: () => {},
+            onClick: () => { },
           }}
           decorativeIcon={Award}
         />
@@ -173,7 +172,7 @@ export default function WorkerDashboard() {
               value={stat.value}
               change={stat.change}
               icon={stat.icon}
-              gradient={stat.gradient}
+              colorIndex={stat.colorIndex}
             />
           ))}
         </div>
@@ -229,7 +228,7 @@ export default function WorkerDashboard() {
                   <DataListItem
                     key={index}
                     icon={DollarSign}
-                    iconGradient="from-green-500 to-emerald-600"
+                    colorIndex={2}
                     primaryText={earning.job}
                     secondaryText={`${earning.date} • ${earning.hours} hours`}
                     rightContent={<p className="font-bold text-sm">${earning.amount}</p>}
@@ -249,7 +248,10 @@ export default function WorkerDashboard() {
           <CardHeader className="border-b py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{backgroundColor: '#463CD2'}}>
+                <div
+                  className="h-7 w-7 rounded-lg flex items-center justify-center"
+                  style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                >
                   <Search className="h-3.5 w-3.5 text-white" />
                 </div>
                 <div>
@@ -263,30 +265,36 @@ export default function WorkerDashboard() {
           <CardContent className="p-3">
             <div className="grid gap-2 md:grid-cols-3">
               {availableJobs.map((job, index) => (
-                <div key={index} className="group relative bg-white rounded-lg p-2.5 border border-gray-200 hover:shadow-lg transition-all duration-300">
+                <div
+                  key={index}
+                  className="group relative rounded-lg p-2.5 border hover:shadow-lg transition-all duration-300"
+                  style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-card-border)' }}
+                >
                   <div className="flex items-start gap-2 mb-2">
-                    <div className="h-7 w-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{background: 'linear-gradient(to bottom right, #463CD2, #6366f1)'}}>
+                    <div
+                      className="h-7 w-7 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
+                      style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                    >
                       {job.company.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs text-gray-900 truncate">{job.title}</h4>
-                      <p className="text-[10px] text-gray-600 truncate mt-0.5">{job.company}</p>
+                      <h4 className="font-semibold text-xs truncate" style={{ color: 'var(--theme-card-text)' }}>{job.title}</h4>
+                      <p className="text-[10px] truncate mt-0.5" style={{ color: 'var(--theme-card-subtext)' }}>{job.company}</p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-1.5 mb-2">
-                    <div className="flex items-center gap-1 text-[10px] text-gray-600">
+                    <div className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--theme-card-subtext)' }}>
                       <MapPin className="h-3 w-3 text-gray-400" />
                       <span>{job.location}</span>
                     </div>
-                    
-                    <span className={`inline-block px-1.5 py-0.5 text-[10px] font-medium rounded ${
-                      job.type === 'Full-time' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'
-                    }`}>
+
+                    <span className={`inline-block px-1.5 py-0.5 text-[10px] font-medium rounded ${job.type === 'Full-time' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'
+                      }`}>
                       {job.type}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                     <div className="text-sm font-bold text-emerald-600">{job.pay}</div>
                     <ActionButton variant="primary" size="sm">

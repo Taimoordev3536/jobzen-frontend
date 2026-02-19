@@ -47,12 +47,19 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
   }
+
+  /* 
+   * Themes are now injected by ThemeProvider from src/config/colors.config.ts 
+   * No hardcoded theme blocks needed here.
+   */
 }
+
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -69,11 +76,15 @@
   }
 
   /* Typography defaults */
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     @apply font-jakarta;
   }
 
-  h4, h5, h6 {
+  h4,
+  h5,
+  h6 {
     @apply font-jakarta;
   }
 
@@ -105,21 +116,21 @@
 
   .bg-grid-white\/\[0\.05\] {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   }
-  
+
   .animate-pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-  
+
   .glow {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
   }
-  
+
   .glow-green {
     box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
   }
-  
+
   .glow-purple {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
   }
@@ -129,6 +140,7 @@
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -140,6 +152,7 @@
       opacity: 0;
       transform: scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
@@ -147,13 +160,27 @@
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }
 
@@ -183,6 +210,10 @@
 }
 
 /* Smooth transitions for interactive elements */
-button, a, input, textarea, select {
+button,
+a,
+input,
+textarea,
+select {
   @apply transition-all duration-200;
 }

@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/terms', '/privacy'];
+  const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/terms', '/privacy', '/auth/callback'];
   const isPublicRoute = publicRoutes.some(route => pathname === route);
 
   // If accessing a public route, allow
@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
     // Check if user is accessing a role-specific route
     for (const [role, routes] of Object.entries(roleRoutes)) {
       const isRoleRoute = routes.some(route => pathname.startsWith(route));
-      
+
       if (isRoleRoute && user.role !== role) {
         // Redirect to their correct dashboard
         const url = request.nextUrl.clone();

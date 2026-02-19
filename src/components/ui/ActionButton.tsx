@@ -2,17 +2,18 @@ import React from 'react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
+import { brandColors } from '@/config/colors.config';
 
-type ActionVariant = 
-  | 'primary'      // Download, Apply Now, Next
-  | 'secondary'    // Manage
-  | 'outline'      // Back
-  | 'danger'       // Delete
-  | 'success'      // Create
-  | 'accent'       // Buy
-  | 'neutral'      // Cancel
-  | 'info'         // Update
-  | 'soft-primary'; // View
+type ActionVariant =
+  | 'primary'       // Main CTA — uses theme accent
+  | 'secondary'     // Secondary CTA — uses theme accent (lighter)
+  | 'outline'       // Outlined — uses theme accent border/text
+  | 'soft-primary'  // Soft — uses theme accent light bg
+  | 'danger'        // Destructive — stays red
+  | 'success'       // Positive — stays green
+  | 'accent'        // Highlight — stays amber
+  | 'neutral'       // Muted — stays gray
+  | 'info';         // Informational — stays sky
 
 interface ActionButtonProps {
   variant: ActionVariant;
@@ -25,6 +26,12 @@ interface ActionButtonProps {
   disabled?: boolean;
 }
 
+/**
+ * Variants that use the theme accent color are driven by CSS variables.
+ * Semantic variants (danger, success, accent, neutral, info) keep fixed colors.
+ */
+const THEME_VARIANTS = new Set(['primary', 'secondary', 'outline', 'soft-primary']);
+
 export const ActionButton: React.FC<ActionButtonProps> = ({
   variant,
   children,
@@ -35,18 +42,6 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   className,
   disabled = false,
 }) => {
-  const variantStyles = {
-    primary: 'bg-[#4439CC] hover:bg-[#372FA8] text-white border-0 shadow-sm hover:shadow-md',
-    secondary: 'bg-[#5B52E6] hover:bg-[#4439CC] text-white border-0 shadow-sm hover:shadow-md',
-    outline: 'bg-transparent hover:bg-[#EDEBFF] text-[#4439CC] border border-[#4439CC] hover:border-[#4439CC]',
-    danger: 'bg-[#DC2626] hover:bg-[#B91C1C] text-white border-0 shadow-sm hover:shadow-md',
-    success: 'bg-[#16A34A] hover:bg-[#15803D] text-white border-0 shadow-sm hover:shadow-md',
-    accent: 'bg-[#F59E0B] hover:bg-[#D97706] text-white border-0 shadow-sm hover:shadow-md',
-    neutral: 'bg-[#6B7280] hover:bg-[#4B5563] text-white border-0 shadow-sm hover:shadow-md',
-    info: 'bg-[#0EA5E9] hover:bg-[#0284C7] text-white border-0 shadow-sm hover:shadow-md',
-    'soft-primary': 'bg-[#EDEBFF] hover:bg-[#DCD9FF] text-[#4439CC] border-0',
-  };
-
   const sizeStyles = {
     sm: 'h-6 px-2.5 text-[10px]',
     md: 'h-8 px-4 text-xs',
@@ -59,17 +54,61 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
     lg: 'h-4 w-4',
   };
 
+  // Fixed semantic colors (not theme-driven)
+  const staticVariantStyles: Partial<Record<ActionVariant, string>> = {
+    danger: `bg-[${brandColors.danger}] hover:bg-[${brandColors.dangerHover}] text-white border-0 shadow-sm hover:shadow-md`,
+    success: `bg-[${brandColors.success}] hover:bg-[${brandColors.successHover}] text-white border-0 shadow-sm hover:shadow-md`,
+    accent: `bg-[${brandColors.accent}] hover:bg-[${brandColors.accentHover}] text-white border-0 shadow-sm hover:shadow-md`,
+    neutral: `bg-[${brandColors.neutral}] hover:bg-[${brandColors.neutralHover}] text-white border-0 shadow-sm hover:shadow-md`,
+    info: `bg-[${brandColors.info}] hover:bg-[${brandColors.infoHover}] text-white border-0 shadow-sm hover:shadow-md`,
+  };
+
+  // For theme-driven variants, build inline style + minimal className
+  const getThemeStyle = (): React.CSSProperties => {
+    switch (variant) {
+      case 'primary':
+        return {
+          background: 'var(--theme-accent)',
+          color: '#ffffff',
+          border: 'none',
+        };
+      case 'secondary':
+        return {
+          background: 'var(--theme-nav-active-to)',
+          color: '#ffffff',
+          border: 'none',
+        };
+      case 'outline':
+        return {
+          background: 'transparent',
+          color: 'var(--theme-accent)',
+          border: '1px solid var(--theme-accent)',
+        };
+      case 'soft-primary':
+        return {
+          background: 'var(--theme-accent-light)',
+          color: 'var(--theme-accent)',
+          border: 'none',
+        };
+      default:
+        return {};
+    }
+  };
+
+  const isThemeVariant = THEME_VARIANTS.has(variant);
+
   return (
     <Button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'relative font-medium rounded-lg transition-all duration-300',
-        variantStyles[variant],
+        'relative font-medium rounded-lg transition-all duration-300 shadow-sm hover:shadow-md',
+        !isThemeVariant && staticVariantStyles[variant],
         sizeStyles[size],
         disabled && 'opacity-50 cursor-not-allowed',
-        className
+        className,
       )}
+      style={isThemeVariant ? getThemeStyle() : undefined}
     >
       <span className="flex items-center gap-1.5">
         {Icon && iconPosition === 'left' && <Icon className={iconSizes[size]} />}

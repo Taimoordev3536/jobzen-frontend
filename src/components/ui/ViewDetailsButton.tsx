@@ -27,10 +27,19 @@ export const ViewDetailsButton: React.FC<ViewDetailsButtonProps> = ({
       variant="ghost"
       size="sm"
       className={cn(
-        'group font-medium text-[#4439CC] hover:text-[#372FA8] bg-transparent hover:bg-transparent rounded-md transition-colors duration-150',
+        'group font-medium bg-transparent hover:bg-transparent rounded-md transition-colors duration-150',
         sizeClasses[size],
-        className
+        className,
       )}
+      style={{
+        color: 'var(--theme-accent)',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.color = 'var(--theme-nav-active-from)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.color = 'var(--theme-accent)';
+      }}
     >
       {label}
     </Button>

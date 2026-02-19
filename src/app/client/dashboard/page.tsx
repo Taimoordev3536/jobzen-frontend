@@ -11,7 +11,6 @@ import { WelcomeBanner } from '@/components/dashboard/WelcomeBanner';
 import { ContractCard } from '@/components/dashboard/ContractCard';
 import { FullPageSkeleton } from '@/components/loading/FullPageSkeleton';
 import { getDashboardConfig } from '@/config/dashboard.config';
-import { gradients } from '@/config/colors.config';
 import { UserRole } from '@/types/auth';
 import {
   Briefcase,
@@ -39,28 +38,28 @@ const stats = [
     value: '8',
     change: '+2 this week',
     icon: Briefcase,
-    gradient: gradients.stats.blue,
+    colorIndex: 1 as const,
   },
   {
     title: 'Service Providers',
     value: '12',
     change: '4 verified partners',
     icon: Users,
-    gradient: gradients.stats.cyan,
+    colorIndex: 2 as const,
   },
   {
     title: 'Completed Jobs',
     value: '47',
     change: '+5 this month',
     icon: CheckCircle2,
-    gradient: gradients.stats.green,
+    colorIndex: 3 as const,
   },
   {
     title: 'Total Spent',
     value: '$18,240',
     change: '$4.2K this month',
     icon: DollarSign,
-    gradient: gradients.stats.purple,
+    colorIndex: 4 as const,
   },
 ];
 
@@ -145,12 +144,12 @@ export default function ClientDashboard() {
           primaryAction={{
             label: 'New Request',
             icon: Plus,
-            onClick: () => {},
+            onClick: () => { },
           }}
           secondaryAction={{
             label: 'Browse Providers',
             icon: ArrowUpRight,
-            onClick: () => {},
+            onClick: () => { },
           }}
           decorativeIcon={Users}
         />
@@ -164,7 +163,7 @@ export default function ClientDashboard() {
               value={stat.value}
               change={stat.change}
               icon={stat.icon}
-              gradient={stat.gradient}
+              colorIndex={stat.colorIndex}
             />
           ))}
         </div>
@@ -192,8 +191,8 @@ export default function ClientDashboard() {
                     status={request.urgency}
                     statusVariant={
                       request.urgency === 'High' ? 'error' :
-                      request.urgency === 'Medium' ? 'warning' :
-                      'success'
+                        request.urgency === 'Medium' ? 'warning' :
+                          'success'
                     }
                     details={[
                       { label: 'Date', value: request.date },
@@ -201,11 +200,10 @@ export default function ClientDashboard() {
                     ]}
                     gradient="purple"
                     footerContent={
-                      <span className={`text-xs font-medium ${
-                        request.status === 'In Progress' ? 'text-blue-600' :
-                        request.status === 'Scheduled' ? 'text-green-600' :
-                        'text-yellow-600'
-                      }`}>
+                      <span className={`text-xs font-medium ${request.status === 'In Progress' ? 'text-blue-600' :
+                          request.status === 'Scheduled' ? 'text-green-600' :
+                            'text-yellow-600'
+                        }`}>
                         {request.status}
                       </span>
                     }
@@ -250,8 +248,11 @@ export default function ClientDashboard() {
         </div>
 
         {/* Recent Invoices */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="border-b bg-gradient-to-r from-indigo-50 to-blue-50 pb-3">
+        <Card className="border-0 shadow-lg" style={{ backgroundColor: 'var(--theme-card-bg)' }}>
+          <CardHeader
+            className="border-b pb-3"
+            style={{ backgroundColor: 'var(--theme-accent-light)', borderColor: 'var(--theme-card-border)' }}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-base">
@@ -259,7 +260,7 @@ export default function ClientDashboard() {
                 </CardTitle>
                 <CardDescription className="mt-0.5 text-xs">Your payment history and pending invoices</CardDescription>
               </div>
-                <ViewDetailsButton size="md" label="View All" />
+              <ViewDetailsButton size="md" label="View All" />
             </div>
           </CardHeader>
           <CardContent className="pt-3">
@@ -267,7 +268,10 @@ export default function ClientDashboard() {
               {recentInvoices.map((invoice) => (
                 <div key={invoice.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-white to-gray-50">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{backgroundColor: '#463BD0'}}>
+                    <div
+                      className="h-7 w-7 rounded-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
+                      style={{ background: 'linear-gradient(to bottom right, var(--theme-icon-1-from), var(--theme-icon-1-to))' }}
+                    >
                       <FileText className="h-3.5 w-3.5 text-white" />
                     </div>
                     <div>
@@ -277,10 +281,9 @@ export default function ClientDashboard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="font-bold text-sm">${invoice.amount}</p>
-                    <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${
-                      invoice.status === 'Paid' ? 'bg-green-100 text-green-700' :
-                      'bg-yellow-100 text-yellow-700'
-                    }`}>
+                    <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full ${invoice.status === 'Paid' ? 'bg-green-100 text-green-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
                       {invoice.status}
                     </span>
                     <ActionButton variant="primary" size="sm">

@@ -80,11 +80,15 @@ export function JobCard({
   return (
     <div
       className={cn(
-        "group relative p-3 border border-gray-200 rounded-lg",
-        "hover:shadow-lg transition-all duration-300 bg-white overflow-hidden",
+        "group relative p-3 border rounded-lg",
+        "hover:shadow-lg transition-all duration-300 overflow-hidden",
         onClick && "cursor-pointer",
         className
       )}
+      style={{
+        backgroundColor: 'var(--theme-card-bg)',
+        borderColor: 'var(--theme-card-border)',
+      }}
       onClick={onClick}
     >
       {/* Animated gradient background */}
@@ -98,9 +102,19 @@ export function JobCard({
         {/* Header with title and status */}
         <div className="flex items-start justify-between mb-1.5">
           <div className="flex-1 min-w-0">
-            <h4 className="font-bold text-sm mb-1 truncate">{title}</h4>
+            <h4
+              className="font-bold text-sm mb-1 truncate"
+              style={{ color: 'var(--theme-card-text)' }}
+            >
+              {title}
+            </h4>
             {subtitle && (
-              <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
+              <p
+                className="text-xs truncate"
+                style={{ color: 'var(--theme-card-subtext)' }}
+              >
+                {subtitle}
+              </p>
             )}
           </div>
           <span className={cn(
@@ -114,7 +128,10 @@ export function JobCard({
         {/* Details section */}
         <div className="space-y-1 mt-2">
           {location && (
-            <div className="flex items-center gap-1 text-xs text-gray-600">
+            <div
+              className="flex items-center gap-1 text-xs"
+              style={{ color: 'var(--theme-card-subtext)' }}
+            >
               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -122,9 +139,12 @@ export function JobCard({
               <span className="truncate">{location}</span>
             </div>
           )}
-          
+
           {(date || time) && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-600">
+            <div
+              className="flex items-center gap-1.5 text-xs"
+              style={{ color: 'var(--theme-card-subtext)' }}
+            >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -135,12 +155,26 @@ export function JobCard({
 
         {/* Footer with actions */}
         {(leftBadge || pay || rightContent || onViewDetails) && (
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+          <div
+            className="flex items-center justify-between mt-2 pt-2 border-t"
+            style={{ borderColor: 'var(--theme-card-border)' }}
+          >
             <div className="flex items-center gap-2">
               {leftBadge && (
-                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-100 rounded-lg">
-                  <leftBadge.icon className="h-3 w-3 text-gray-600" />
-                  <span className="text-xs font-semibold">{leftBadge.label}</span>
+                <div
+                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg"
+                  style={{ backgroundColor: 'var(--theme-accent-light)' }}
+                >
+                  <leftBadge.icon
+                    className="h-3 w-3"
+                    style={{ color: 'var(--theme-card-subtext)' }}
+                  />
+                  <span
+                    className="text-xs font-semibold"
+                    style={{ color: 'var(--theme-card-text)' }}
+                  >
+                    {leftBadge.label}
+                  </span>
                 </div>
               )}
               {pay && (

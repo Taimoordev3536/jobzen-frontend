@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeStore } from '@/store/themeStore';
 
 interface QuickAction {
   title: string;
@@ -19,6 +22,7 @@ interface QuickActionsCardProps {
   className?: string;
 }
 
+/* ── Original multi-color themes (used when activeTheme === 'default') ── */
 const colorThemes = {
   blue: {
     bg: 'from-blue-50 via-blue-50/50 to-white',
@@ -102,23 +106,6 @@ const colorThemes = {
   },
 };
 
-/**
- * Quick Actions Card Component
- * 
- * Displays a grid of action cards with icons, titles, and descriptions
- * Used across dashboards for quick access to common actions
- * 
- * @example
- * <QuickActionsCard
- *   title="Quick Actions"
- *   description="Manage your platform efficiently"
- *   actions={[
- *     { title: 'Post Job', description: 'Create new job', icon: Plus, color: 'blue', onClick: () => {} },
- *     { title: 'Messages', description: 'Chat with workers', icon: MessageSquare, color: 'green' }
- *   ]}
- *   columns={4}
- * />
- */
 export function QuickActionsCard({
   title = 'Quick Actions',
   description,
@@ -126,23 +113,40 @@ export function QuickActionsCard({
   columns = 4,
   className,
 }: QuickActionsCardProps) {
+  const { activeTheme } = useThemeStore();
+  const isDefault = activeTheme === 'default';
+
   return (
     <Card className={cn(
       "border-0 shadow-xl overflow-hidden relative",
-      "bg-gradient-to-br from-gray-50 via-white to-blue-50",
+      isDefault
+        ? "bg-gradient-to-br from-gray-50 via-white to-blue-50"
+        : undefined,
       className
-    )}>
-      <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -mr-24 -mt-24 blur-3xl" />
-      
+    )}
+      style={!isDefault ? { backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-card-border)' } : undefined}
+    >
+      {isDefault && (
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -mr-24 -mt-24 blur-3xl" />
+      )}
+
       <CardHeader className="relative">
-        <CardTitle className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+        <CardTitle
+          className={cn("text-lg font-bold", isDefault && "bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent")}
+          style={!isDefault ? { color: 'var(--theme-card-text)' } : undefined}
+        >
           {title}
         </CardTitle>
         {description && (
-          <CardDescription className="mt-1 text-gray-600">{description}</CardDescription>
+          <CardDescription
+            className={isDefault ? "mt-1 text-gray-600" : "mt-1"}
+            style={!isDefault ? { color: 'var(--theme-card-subtext)' } : undefined}
+          >
+            {description}
+          </CardDescription>
         )}
       </CardHeader>
-      
+
       <CardContent className="relative">
         <div className={cn(
           "grid gap-3",
@@ -152,52 +156,81 @@ export function QuickActionsCard({
         )}>
           {actions.map((action, index) => {
             const Icon = action.icon;
-            const theme = colorThemes[action.color];
-            
+
+            /* ── Default theme: use original per-color Tailwind classes ── */
+            if (isDefault) {
+              const theme = colorThemes[action.color];
+              return (
+                <div
+                  key={index}
+                  onClick={action.onClick}
+                  className={cn(
+                    "group relative overflow-hidden rounded-xl border transition-all duration-500",
+                    "hover:shadow-lg hover:-translate-y-1",
+                    action.onClick && "cursor-pointer",
+                    `bg-gradient-to-br ${theme.bg}`,
+                    theme.border,
+                    theme.shadow
+                  )}
+                >
+                  <div className={cn("absolute inset-0 transition-all duration-500", `bg-gradient-to-br ${theme.gradient}`)} />
+                  <div className={cn("absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700", `bg-gradient-to-br ${theme.decorative}`)} />
+                  <div className="relative p-4 flex flex-col items-center text-center gap-3">
+                    <div className={cn("h-12 w-12 rounded-xl shadow-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500", `bg-gradient-to-br ${theme.iconBg}`, theme.iconShadow)}>
+                      <Icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className={cn("font-semibold text-sm text-gray-900 transition-colors", theme.hoverText)}>{action.title}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">{action.description}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            /* ── Non-default theme: use CSS variables so all cards match the theme ── */
+            const slot = ((index % 4) + 1) as 1 | 2 | 3 | 4;
+            const iconFrom = `var(--theme-icon-${slot}-from)`;
+            const iconTo = `var(--theme-icon-${slot}-to)`;
+
             return (
               <div
                 key={index}
                 onClick={action.onClick}
                 className={cn(
-                  "group relative overflow-hidden rounded-xl border transition-all duration-500",
-                  "hover:shadow-xl hover:-translate-y-1",
+                  "group relative overflow-hidden rounded-xl border-2 transition-all duration-300",
+                  "hover:shadow-lg hover:-translate-y-0.5",
                   action.onClick && "cursor-pointer",
-                  `bg-gradient-to-br ${theme.bg}`,
-                  theme.border,
-                  theme.shadow
                 )}
+                style={{
+                  backgroundColor: 'var(--theme-qa-card-bg)',
+                  borderColor: 'var(--theme-qa-card-border)',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'var(--theme-qa-card-hover-border)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'var(--theme-qa-card-border)';
+                }}
               >
-                {/* Animated gradient overlay */}
-                <div className={cn(
-                  "absolute inset-0 transition-all duration-500",
-                  `bg-gradient-to-br ${theme.gradient}`
-                )} />
-                
-                {/* Decorative blur circle */}
-                <div className={cn(
-                  "absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 blur-xl",
-                  "group-hover:scale-150 transition-transform duration-700",
-                  `bg-gradient-to-br ${theme.decorative}`
-                )} />
-                
-                {/* Content */}
+                <div
+                  className="absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 blur-xl opacity-20 group-hover:scale-150 transition-transform duration-700"
+                  style={{ background: `linear-gradient(to bottom right, ${iconFrom}, ${iconTo})` }}
+                />
                 <div className="relative p-4 flex flex-col items-center text-center gap-3">
-                  <div className={cn(
-                    "h-12 w-12 rounded-xl shadow-lg flex items-center justify-center",
-                    "group-hover:scale-110 group-hover:rotate-3 transition-all duration-500",
-                    `bg-gradient-to-br ${theme.iconBg}`,
-                    theme.iconShadow
-                  )}>
+                  <div
+                    className="h-12 w-12 rounded-xl shadow-md flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+                    style={{ background: `linear-gradient(to bottom right, ${iconFrom}, ${iconTo})` }}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className={cn(
-                      "font-semibold text-sm text-gray-900 transition-colors",
-                      theme.hoverText
-                    )}>
+                    <h3 className="font-semibold text-sm transition-colors" style={{ color: iconFrom }}>
                       {action.title}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{action.description}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--theme-card-subtext)' }}>
+                      {action.description}
+                    </p>
                   </div>
                 </div>
               </div>
