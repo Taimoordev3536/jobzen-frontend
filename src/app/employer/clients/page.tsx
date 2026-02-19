@@ -19,6 +19,16 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Trash2 } from 'lucide-react';
 
 
 export default function ClientsPage() {
@@ -26,6 +36,7 @@ export default function ClientsPage() {
     const [clients, setClients] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const { toast } = useToast();
 
     // Form state
@@ -56,6 +67,25 @@ export default function ClientsPage() {
             });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this client?')) return;
+        try {
+            await authService.deleteManagedUser(id);
+            toast({
+                title: 'Success',
+                description: 'Client deleted successfully',
+            });
+            loadClients();
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: 'Error',
+                description: 'Failed to delete client',
+                variant: 'destructive',
+            });
         }
     };
 
@@ -92,6 +122,15 @@ export default function ClientsPage() {
     const totalClients = clients.length;
     const activeClients = clients.filter(c => c.status === 'active' || !c.status).length;
     const inactiveClients = clients.filter(c => c.status === 'inactive').length;
+
+    // Filter clients based on search
+    const filteredClients = clients.filter(client => {
+        const query = searchQuery.toLowerCase();
+        const fullName = (client.name || `${client.firstName} ${client.lastName} `).toLowerCase();
+        const email = (client.email || '').toLowerCase();
+        const phone = (client.phone || '').toLowerCase();
+        return fullName.includes(query) || email.includes(query) || phone.includes(query);
+    });
 
     if (isLoading) {
         return <FullPageSkeleton />;
@@ -157,7 +196,7 @@ export default function ClientsPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Display Name (or Company Name)</label>
                                 <Input
-                                    placeholder="Full Name"
+                                    placeholder="Full Name / Company"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     required
@@ -211,7 +250,12 @@ export default function ClientsPage() {
                             <div className="flex items-center gap-3">
                                 <div className="relative w-64">
                                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input placeholder="Search clients..." className="pl-8" />
+                                    <Input
+                                        placeholder="Search clients..."
+                                        className="pl-8"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
                                 </div>
                                 <Button onClick={() => setIsCreating(true)}>
                                     <Plus className="mr-2 h-4 w-4" />
@@ -220,8 +264,8 @@ export default function ClientsPage() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-4">
-                        {clients.length === 0 ? (
+                    <CardContent className="p-0">
+                        {filteredClients.length === 0 ? (
                             <div className="text-center py-12">
                                 <UserCircle2 className="mx-auto h-12 w-12 text-muted-foreground/50" />
                                 <h3 className="mt-4 text-lg font-semibold">No clients found</h3>
@@ -229,25 +273,55 @@ export default function ClientsPage() {
                                 <Button className="mt-4" onClick={() => setIsCreating(true)}>Add First Client</Button>
                             </div>
                         ) : (
-                            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                                {clients.map((client) => (
-                                    <DataListItem
-                                        key={client.id}
-                                        primaryText={client.name || `${client.firstName} ${client.lastName}`}
-                                        secondaryText={client.email}
-                                        icon={UserCircle2}
-                                        colorIndex={4}
-                                        rightContent={
-                                            <div className="text-xs text-muted-foreground">
-                                                {client.phone || 'No phone'}
-                                            </div>
-                                        }
-                                        badge={{
-                                            label: client.status || 'Active',
-                                            variant: (client.status === 'active' || !client.status) ? 'success' : 'warning'
-                                        }}
-                                    />
-                                ))}
+                            <div className="rounded-md border-t">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[300px]">Client</TableHead>
+                                            <TableHead>Phone</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Joined</TableHead>
+                                            <TableHead className="text-right">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {filteredClients.map((client) => (
+                                            <TableRow key={client.id}>
+                                                <TableCell>
+                                                    <div>
+                                                        <div className="font-medium text-sm">
+                                                            {client.name || `${client.firstName} ${client.lastName}`}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground">
+                                                            {client.email}
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-sm">
+                                                    {client.phone || <span className="text-muted-foreground italic">None</span>}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge variant={client.status === 'active' ? 'success' : 'secondary'}>
+                                                        {client.status || 'Active'}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-sm text-muted-foreground">
+                                                    {client.createdAt ? new Date(client.createdAt).toLocaleDateString() : 'N/A'}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-muted-foreground hover:text-destructive"
+                                                        onClick={() => handleDelete(client.id)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
                             </div>
                         )}
                     </CardContent>
